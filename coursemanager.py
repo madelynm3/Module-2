@@ -1,13 +1,13 @@
 import sqlite3
 
 # Connect to database
-
 connection = sqlite3.connect('courses.db')
 cursor = connection.cursor()
 
-# Create tables for planned and completed classes
+# Create 2 tables for planned and completed classes
 cursor.execute("CREATE TABLE IF NOT EXISTS completed (year INT, semester TEXT, course_code TEXT, grade TEXT, credits INT)")
 cursor.execute("CREATE TABLE IF NOT EXISTS planned (year INT, semester TEXT, course_code TEXT, grade TEXT, credits INT)")
+
 
 def get_course_code(cursor):
     cursor.execute("SELECT course_code FROM planned")
@@ -36,21 +36,27 @@ while choice != "7":
     print()
 
     if choice == "1":
-        # Display past courses and total courses completed
+        # Display past courses
         cursor.execute("SELECT * FROM completed ORDER BY year ASC")
         print("{:>10}  {:>10}  {:>10} {:>10}  {:>10}".format("Year", "Semester", "Course Code", "Grade", "Credits"))
         for record in cursor.fetchall():
             print("{:>10} {:>10} {:>10} {:>10} {:>10}".format(record[0], record[1], record[2], record[3], record[4]))
+        
+        # Display a total count of completed courses
         cursor.execute("SELECT COUNT(*) FROM completed")
         print("Classes taken: ", cursor.fetchall()[-1][-1])
+    
     elif choice == "2":
         # Display planned courses and total courses planned
         cursor.execute("SELECT * FROM planned ORDER BY year ASC")
         print("{:>10}  {:>10}  {:>10} {:>10} {:>10}".format("Year", "Semester", "Course Code", "Grade", "Credits"))
         for record in cursor.fetchall():
             print("{:>10}  {:>10}  {:>10} {:>10}  {:>10}".format(record[0], record[1], record[2], record[3], record[4]))
+        
+        # Display a total count of planned courses
         cursor.execute("SELECT COUNT(*) FROM planned")
         print("Classes planned: ", cursor.fetchall()[-1][-1])
+    
     elif choice == "3":
         # Update past courses
         year = input("Year: ")
@@ -61,6 +67,7 @@ while choice != "7":
         values = (year, semester, course_code, grade, credits)
         cursor.execute("INSERT INTO completed VALUES (?,?,?,?,?)", values)
         connection.commit()
+    
     elif choice == "4":
         # Add planned courses
         year = input("Year: ")
@@ -71,6 +78,7 @@ while choice != "7":
         values = (year, semester, course_code, grade, credits)
         cursor.execute("INSERT INTO planned VALUES (?,?,?,?,?)", values)
         connection.commit()
+    
     elif choice == "5":
       # Delete completed courses from planned 
         course_code = get_course_code(cursor)
@@ -79,10 +87,13 @@ while choice != "7":
         values = (str(course_code), )
         cursor.execute("DELETE FROM planned WHERE course_code = ?", values)
         connection.commit()
+    
     elif choice == "6":
-        # Display total credits taken and total credits planned
+        # Display total credits taken
         cursor.execute("SELECT (SUM(credits)) FROM completed")
         print("Completed Credits:", cursor.fetchall()[0][0])
+
+        # Display total credits planned
         cursor.execute("SELECT (SUM(credits)) FROM planned")
         print("Planned Credits:", cursor.fetchall()[0][0])
     print()
@@ -90,6 +101,3 @@ while choice != "7":
 
 # Close the database connection
 connection.close()
-
-
-
