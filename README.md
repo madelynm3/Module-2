@@ -6,7 +6,7 @@ How to use: A menu is displayed that allows the user to add courses into their c
 
 Purpose: Manage courseload and make academic planning simple.
 
-[Software Demo Video](http://youtube.link.goes.here)
+[Software Demo Video](https://youtu.be/r_mWUJcUQ20)
 
 # Relational Database
 
